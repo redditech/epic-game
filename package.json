@@ -1,0 +1,31 @@
+{
+  "name": "epic-game",
+  "version": "1.0.0",
+  "description": "Buildspace build an NFT Game project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/redditech/epic-game.git"
+  },
+  "keywords": [],
+  "author": "Nissan Dookeran",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/redditech/epic-game/issues"
+  },
+  "homepage": "https://github.com/redditech/epic-game#readme",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.3",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "chai": "^4.3.4",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.5.2",
+    "hardhat": "^2.8.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.4.1"
+  }
+}
