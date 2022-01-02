@@ -9,6 +9,7 @@ contract MyEpicGame {
         uint256 characterIndex;
         string name;
         string imageURI;
+        string weapon;
         uint256 hp;
         uint256 maxHp;
         uint256 attackDamage;
@@ -25,6 +26,7 @@ contract MyEpicGame {
     constructor(
         string[] memory characterNames,
         string[] memory characterImageURIs,
+        string[] memory characterWeapons,
         uint[] memory characterHp,
         uint[] memory characterAttackDmg
     ) 
@@ -36,13 +38,15 @@ contract MyEpicGame {
                 characterIndex: i,
                 name: characterNames[i],
                 imageURI: characterImageURIs[i],
+                weapon: characterWeapons[i],
                 hp: characterHp[i],
                 maxHp: characterHp[i],
                 attackDamage: characterAttackDmg[i]
             }));
 
             CharacterAttributes memory c = defaultCharacters[i];
-            console.log("Done initializing %s w/HP %s, img %s", c.name, c.hp, c.imageURI);
+            console.log("Done initializing %s with w/HP %s, img %s", c.name, c.hp, c.imageURI);
+            console.log("preferred weapon %s", c.weapon);
         }
 
     }

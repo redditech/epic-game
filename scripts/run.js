@@ -6,6 +6,7 @@
             ["https://i.imgur.com/C6j1tZF.jpeg", // Images
                 "https://i.imgur.com/Xapy2Cb.jpeg",
                 "https://i.imgur.com/c8byM35.gif"],
+            ["nunchucks", "sais", "swords"],
             [100, 200, 300],                    // HP values
             [100, 50, 25]                       // Attack damage values
         );
