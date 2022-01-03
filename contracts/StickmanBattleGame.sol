@@ -111,6 +111,43 @@ contract StickmanBattleGame is ERC721 {
         _tokenIds.increment();
     }
 
+    function attackBoss() public {
+        // Get the state of the player's NFT.
+        uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
+        CharacterAttributes storage player = nftHolderAttributes[nftTokenIdOfPlayer];
+        console.log("\nPlayer w/character %s about to attack. Has %s HP and %s AD", player.name, player.hp, player.attackDamage);
+        console.log("Boss %s has %s HP and %s AD", bigBoss.name, bigBoss.hp, bigBoss.attackDamage);
+        
+        // Make sure the player has more than 0 HP.
+        require(
+            player.hp > 0,
+            "Error: character must have HP to attack boss."
+        );
+
+        // Make sure the boss has more than 0 HP.
+        require(
+            bigBoss.hp >0,
+            "Error: boss must have HP to attack boss."
+        );
+
+        // Allow the player to attack the boss
+        if (bigBoss.hp < player.attackDamage) {
+            bigBoss.hp = 0;
+        } else {
+            bigBoss.hp = bigBoss.hp - player.attackDamage;
+        }
+        // Allow the boss to attack player
+        if (player.hp < bigBoss.attackDamage) {
+            player.hp = 0;
+        } else {
+            player.hp = player.hp - bigBoss.attackDamage;
+        }
+
+        // Console the outcome
+        console.log("Player attacked boss with %s. New boss hp: %s", player.weapon, bigBoss.hp);
+        console.log("Boss attacked player with %s. New player hp: %s\n", bigBoss.weapon, player.hp);
+    }
+
     function tokenURI(uint256 _tokenId)
         public
         view
