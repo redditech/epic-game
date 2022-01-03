@@ -14,27 +14,26 @@
             "hook and claws", // boss weapon
             10000, // Boss hp
             50 // Boss attack damage
+        // , {gasLimit: 25000000000000}
         );
         await gameContract.deployed();
         console.log("Contract deployed to: ", gameContract.address);
 
         let txn;
-        txn = await gameContract.mintCharacterNFT(0);
+        // We only have three characters,
+        // an NFT w/the character at index 2 of our array
+        txn = await gameContract.mintCharacterNFT(2, {gasLimit: 25000000});
         await txn.wait;
-        console.log("Minted NFT #1");
 
-        txn = await gameContract.mintCharacterNFT(1);
+        txn = await gameContract.attackBoss({gasLimit: 25000000});
         await txn.wait;
-        console.log("Minted NFT #2");
 
-        txn = await gameContract.mintCharacterNFT(2);
+        txn = await gameContract.attackBoss({gasLimit: 25000000});
         await txn.wait;
-        console.log("Minted NFT #3")
-            ;
-        txn = await gameContract.mintCharacterNFT(1);
-        await txn.wait;
-        console.log("Minted NFT #4");
 
+        // Get the value of the NFT's URI
+        let returnedTokenUri = await gameContract.tokenURI(1);
+        console.log("Token URI:", returnedTokenUri);
         process.exit(0);
     } catch (error) {
         console.log(error);
