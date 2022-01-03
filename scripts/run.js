@@ -8,7 +8,12 @@
                 "https://cloudflare-ipfs.com/ipfs/QmVuxzD9Vawj5Tr9dJLcxTUYMvZcJYRZsX7yCS2RtYRdBk"],
             ["phaser", "katana", "staff"],
             [100, 200, 300],                    // HP values
-            [100, 50, 25]                       // Attack damage values
+            [100, 50, 25],                       // Attack damage values
+            "Shady Moe", // Boss name
+            "https://cloudflare-ipfs.com/ipfs/QmVPxkugpFHXGuWpiUa3f8JY1sThht3A61J1aGWCkdbScZ", // Boss image
+            "hook and claws", // boss weapon
+            10000, // Boss hp
+            50 // Boss attack damage
         );
         await gameContract.deployed();
         console.log("Contract deployed to: ", gameContract.address);

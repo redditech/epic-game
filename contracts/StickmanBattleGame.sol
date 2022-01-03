@@ -41,6 +41,17 @@ contract StickmanBattleGame is ERC721 {
     // This is an easy way to store the owner of the NFT and reference it later
     mapping(address => uint256) public nftHolders;
 
+    struct BigBoss {
+        string name;
+        string imageURI;
+        string weapon;
+        uint hp;
+        uint maxHp;
+        uint attackDamage;
+    }
+
+    BigBoss public bigBoss;
+
     // Data passed into the contract when it's first created initializing the characters.
     // We're going to actually pass these values in from run.js
 
@@ -49,11 +60,28 @@ contract StickmanBattleGame is ERC721 {
         string[] memory characterImageURIs,
         string[] memory characterWeapons,
         uint256[] memory characterHp,
-        uint256[] memory characterAttackDmg
-    )
+        uint256[] memory characterAttackDmg,
+        string memory bossName,
+        string memory bossImageURI,
+        string memory bossWeapon,
+        uint bossHp,
+        uint bossAttackDamage
         // Below this, the name and symbol for our tokenURI(tokenId);
+    )
         ERC721("StickmanBattleGame", "SMBG")
     {
+
+        bigBoss = BigBoss({
+            name: bossName,
+            imageURI: bossImageURI,
+            weapon: bossWeapon,
+            hp: bossHp,
+            maxHp: bossHp,
+            attackDamage: bossAttackDamage
+        });
+        console.log("Done initializing boss %s w/HP %s, img %s", bigBoss.name, bigBoss.hp, bigBoss.imageURI);
+        console.log("%s is armed with: %s", bigBoss.name, bigBoss.weapon);
+
         // Loop through all the characters and save their values in our contract
         // so that we can use them later when we mint our NFTs.
         for (uint256 i = 0; i < characterNames.length; i += 1) {
