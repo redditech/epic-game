@@ -45,12 +45,15 @@ contract StickmanBattleGame is ERC721 {
         string name;
         string imageURI;
         string weapon;
-        uint hp;
-        uint maxHp;
-        uint attackDamage;
+        uint256 hp;
+        uint256 maxHp;
+        uint256 attackDamage;
     }
 
     BigBoss public bigBoss;
+
+    event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
+    event AttackComplete(uint newBossHp, uint newPlayerHp);
 
     // Data passed into the contract when it's first created initializing the characters.
     // We're going to actually pass these values in from run.js
@@ -64,13 +67,12 @@ contract StickmanBattleGame is ERC721 {
         string memory bossName,
         string memory bossImageURI,
         string memory bossWeapon,
-        uint bossHp,
-        uint bossAttackDamage
-        // Below this, the name and symbol for our tokenURI(tokenId);
+        uint256 bossHp,
+        uint256 bossAttackDamage
     )
+        // Below this, the name and symbol for our tokenURI(tokenId);
         ERC721("StickmanBattleGame", "SMBG")
     {
-
         bigBoss = BigBoss({
             name: bossName,
             imageURI: bossImageURI,
@@ -79,7 +81,12 @@ contract StickmanBattleGame is ERC721 {
             maxHp: bossHp,
             attackDamage: bossAttackDamage
         });
-        console.log("Done initializing boss %s w/HP %s, img %s", bigBoss.name, bigBoss.hp, bigBoss.imageURI);
+        console.log(
+            "Done initializing boss %s w/HP %s, img %s",
+            bigBoss.name,
+            bigBoss.hp,
+            bigBoss.imageURI
+        );
         console.log("%s is armed with: %s", bigBoss.name, bigBoss.weapon);
 
         // Loop through all the characters and save their values in our contract
@@ -109,26 +116,33 @@ contract StickmanBattleGame is ERC721 {
 
         // increment tokenIds here so that the first NFT has an ID of 1.
         _tokenIds.increment();
+        
     }
 
     function attackBoss() public {
         // Get the state of the player's NFT.
         uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
-        CharacterAttributes storage player = nftHolderAttributes[nftTokenIdOfPlayer];
-        console.log("\nPlayer w/character %s about to attack. Has %s HP and %s AD", player.name, player.hp, player.attackDamage);
-        console.log("Boss %s has %s HP and %s AD", bigBoss.name, bigBoss.hp, bigBoss.attackDamage);
-        
-        // Make sure the player has more than 0 HP.
-        require(
-            player.hp > 0,
-            "Error: character must have HP to attack boss."
+        CharacterAttributes storage player = nftHolderAttributes[
+            nftTokenIdOfPlayer
+        ];
+        console.log(
+            "\nPlayer w/character %s about to attack. Has %s HP and %s AD",
+            player.name,
+            player.hp,
+            player.attackDamage
+        );
+        console.log(
+            "Boss %s has %s HP and %s AD",
+            bigBoss.name,
+            bigBoss.hp,
+            bigBoss.attackDamage
         );
 
+        // Make sure the player has more than 0 HP.
+        require(player.hp > 0, "Error: character must have HP to attack boss.");
+
         // Make sure the boss has more than 0 HP.
-        require(
-            bigBoss.hp >0,
-            "Error: boss must have HP to attack boss."
-        );
+        require(bigBoss.hp > 0, "Error: boss must have HP to attack boss.");
 
         // Allow the player to attack the boss
         if (bigBoss.hp < player.attackDamage) {
@@ -144,8 +158,43 @@ contract StickmanBattleGame is ERC721 {
         }
 
         // Console the outcome
-        console.log("Player attacked boss with %s. New boss hp: %s", player.weapon, bigBoss.hp);
-        console.log("Boss attacked player with %s. New player hp: %s\n", bigBoss.weapon, player.hp);
+        console.log(
+            "Player attacked boss with %s. New boss hp: %s",
+            player.weapon,
+            bigBoss.hp
+        );
+        console.log(
+            "Boss attacked player with %s. New player hp: %s\n",
+            bigBoss.weapon,
+            player.hp
+        );
+        emit AttackComplete(bigBoss.hp, player.hp);
+    }
+
+    function checkIfUserHasNFT()
+        public
+        view
+        returns (CharacterAttributes memory)
+    {
+        // Get the tokenId of the user's character NFT
+        uint256 userNftTokenId = nftHolders[msg.sender];
+
+        // If the user has a tokenId in the map, return their character
+        if (userNftTokenId > 0) {
+            return nftHolderAttributes[userNftTokenId];
+            // Else, return an empty character
+        } else {
+            CharacterAttributes memory emptyStruct;
+            return emptyStruct;
+        }
+    }
+
+    function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+        return defaultCharacters;
+    }
+
+    function getBigBoss() public view returns (BigBoss memory) {
+        return bigBoss;
     }
 
     function tokenURI(uint256 _tokenId)
@@ -173,7 +222,8 @@ contract StickmanBattleGame is ERC721 {
                 '", "description": "This is an NFT that lets people play in the game Stickman Battles!", "image": "',
                 charAttributes.imageURI,
                 '", "attributes": [ { "trait_type": "Preferred Weapon", "value" : "',
-                weapon,'"',
+                weapon,
+                '"',
                 '}, {"trait_type": "Health Points", "value" :',
                 strHp,
                 ', "max_value":',
@@ -192,7 +242,7 @@ contract StickmanBattleGame is ERC721 {
 
     // Users hit this function to get their NFT based on the
     // characterId they send in
-    function mintCharacterNFT(uint256 _characterIndex) external {
+    function git(uint256 _characterIndex) external {
         // Get current tokenId (starts at 1 since we incremented in the constructor)
         uint256 newItemId = _tokenIds.current();
 
@@ -221,5 +271,6 @@ contract StickmanBattleGame is ERC721 {
 
         // Increment the tokenId for the next person that uses it.
         _tokenIds.increment();
+        emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
     }
 }
