@@ -119,6 +119,29 @@ contract StickmanBattleGame is ERC721 {
         
     }
 
+    function revivePlayer() public {
+        // function to restore health of player
+        uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
+        CharacterAttributes storage player = nftHolderAttributes[nftTokenIdOfPlayer];
+        console.log(
+            "\nPlayer w/character %s about to attack. Has %s HP and %s AD",
+            player.name,
+            player.hp,
+            player.attackDamage
+        );
+        if (player.hp <= 0){
+            console.log("Player cannot attack, health is zero. Reviving first.");
+            player.hp = player.maxHp;
+        }
+        console.log( "Player has been revived");
+        console.log(
+            "\nPlayer w/character %s about to attack. Has %s HP and %s AD",
+            player.name,
+            player.hp,
+            player.attackDamage
+        );
+    }
+
     function attackBoss() public {
         // Get the state of the player's NFT.
         uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
@@ -242,7 +265,7 @@ contract StickmanBattleGame is ERC721 {
 
     // Users hit this function to get their NFT based on the
     // characterId they send in
-    function git(uint256 _characterIndex) external {
+    function mintCharacterNFT(uint256 _characterIndex) external {
         // Get current tokenId (starts at 1 since we incremented in the constructor)
         uint256 newItemId = _tokenIds.current();
 
