@@ -52,8 +52,13 @@ contract StickmanBattleGame is ERC721 {
 
     BigBoss public bigBoss;
 
-    event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
-    event AttackComplete(uint newBossHp, uint newPlayerHp);
+    event CharacterNFTMinted(
+        address sender,
+        uint256 tokenId,
+        uint256 characterIndex
+    );
+    event AttackComplete(uint256 newBossHp, uint256 newPlayerHp);
+    event ReviveComplete(uint256 newPlayerHp);
 
     // Data passed into the contract when it's first created initializing the characters.
     // We're going to actually pass these values in from run.js
@@ -116,30 +121,35 @@ contract StickmanBattleGame is ERC721 {
 
         // increment tokenIds here so that the first NFT has an ID of 1.
         _tokenIds.increment();
-        
     }
 
     function revivePlayer() public {
         // function to restore health of player
         uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
-        CharacterAttributes storage player = nftHolderAttributes[nftTokenIdOfPlayer];
+        CharacterAttributes storage player = nftHolderAttributes[
+            nftTokenIdOfPlayer
+        ];
         console.log(
             "\nPlayer w/character %s about to attack. Has %s HP and %s AD",
             player.name,
             player.hp,
             player.attackDamage
         );
-        if (player.hp <= 0){
-            console.log("Player cannot attack, health is zero. Reviving first.");
+        if (player.hp <= 0) {
+            console.log(
+                "Player cannot attack, health is zero. Reviving first."
+            );
             player.hp = player.maxHp;
         }
-        console.log( "Player has been revived");
+        console.log("Player has been revived");
         console.log(
             "\nPlayer w/character %s about to attack. Has %s HP and %s AD",
             player.name,
             player.hp,
             player.attackDamage
         );
+
+        emit ReviveComplete(player.hp);
     }
 
     function attackBoss() public {
@@ -212,7 +222,11 @@ contract StickmanBattleGame is ERC721 {
         }
     }
 
-    function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+    function getAllDefaultCharacters()
+        public
+        view
+        returns (CharacterAttributes[] memory)
+    {
         return defaultCharacters;
     }
 
@@ -242,7 +256,7 @@ contract StickmanBattleGame is ERC721 {
                 charAttributes.name,
                 " -- NFT #: ",
                 Strings.toString(_tokenId),
-                '", "description": "This is an NFT that lets people play in the game Stickman Battles!", "image": "',
+                '", "description": "This is an NFT that lets people play in the game Stickman Battles!", "image": "ipfs://',
                 charAttributes.imageURI,
                 '", "attributes": [ { "trait_type": "Preferred Weapon", "value" : "',
                 weapon,
